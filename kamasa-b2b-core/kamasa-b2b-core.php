@@ -48,5 +48,9 @@ register_deactivation_hook( __FILE__, 'kamasa_b2b_deactivate' );
  */
 function kamasa_b2b_init() {
     // Lugar para cargar archivos esenciales del plugin.
+
+    if ( is_admin() ) {
+        require_once KAMASA_B2B_PLUGIN_DIR . 'admin/meta-box-precios-volumen.php';
+    }
 }
 add_action( 'plugins_loaded', 'kamasa_b2b_init' );
