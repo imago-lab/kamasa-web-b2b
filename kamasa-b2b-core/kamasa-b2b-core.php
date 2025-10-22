@@ -50,6 +50,7 @@ function kamasa_b2b_init() {
     // Lugar para cargar archivos esenciales del plugin.
 
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/pricing/pricing-logic.php';
+    require_once KAMASA_B2B_PLUGIN_DIR . 'includes/frontend/display-logic.php';
 
     if ( is_admin() ) {
         require_once KAMASA_B2B_PLUGIN_DIR . 'admin/meta-box-precios-volumen.php';
