@@ -204,6 +204,7 @@ function kamasa_enviar_cotizacion_ajax_handler() {
 
     // Aquí podrías guardar el lead en un CPT "lead" con wp_insert_post().
 
+    // La URL se obtendrá desde una página de ajustes del plugin que deberá crearse.
     $webhook_url = get_option( 'kamasa_b2b_n8n_webhook_url', '' );
 
     if ( empty( $webhook_url ) ) {
