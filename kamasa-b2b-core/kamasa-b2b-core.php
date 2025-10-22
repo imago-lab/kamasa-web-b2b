@@ -51,6 +51,7 @@ function kamasa_b2b_init() {
 
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/pricing/pricing-logic.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/frontend/display-logic.php';
+    require_once KAMASA_B2B_PLUGIN_DIR . 'includes/api/customer-endpoints.php';
 
     if ( is_admin() ) {
         require_once KAMASA_B2B_PLUGIN_DIR . 'admin/meta-box-precios-volumen.php';
