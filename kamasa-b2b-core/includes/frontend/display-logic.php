@@ -23,6 +23,10 @@ function kamasa_b2b_usuario_autorizado() {
         return false;
     }
 
+    if ( ! function_exists( 'kamasa_es_usuario_b2b' ) ) {
+        return false;
+    }
+
     $is_authorized = kamasa_es_usuario_b2b( $user_id );
 
     /**

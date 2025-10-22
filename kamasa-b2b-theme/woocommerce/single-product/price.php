@@ -15,7 +15,9 @@ if ( ! $product instanceof WC_Product ) {
     return;
 }
 
-$usuario_autorizado = is_user_logged_in() && kamasa_es_usuario_b2b( get_current_user_id() );
+$usuario_autorizado = is_user_logged_in()
+    && function_exists( 'kamasa_es_usuario_b2b' )
+    && kamasa_es_usuario_b2b( get_current_user_id() );
 
 if ( ! $usuario_autorizado ) :
     $login_url = wp_login_url( get_permalink( $product->get_id() ) );
