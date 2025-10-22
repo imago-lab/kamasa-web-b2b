@@ -62,6 +62,7 @@ function kamasa_b2b_init() {
 
     if ( is_admin() ) {
         require_once KAMASA_B2B_PLUGIN_DIR . 'admin/meta-box-precios-volumen.php';
+        require_once KAMASA_B2B_PLUGIN_DIR . 'admin/settings-page.php';
     }
 }
 add_action( 'plugins_loaded', 'kamasa_b2b_init' );
