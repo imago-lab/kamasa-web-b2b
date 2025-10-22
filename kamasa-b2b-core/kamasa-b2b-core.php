@@ -27,7 +27,8 @@ define( 'KAMASA_B2B_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
  * @return void
  */
 function kamasa_b2b_activate() {
-    // Acciones al activar (por ejemplo, flush rewrite rules si registras CPTs/Taxonomies después).
+    add_rewrite_endpoint( 'panel-financiero', EP_ROOT | EP_PAGES );
+    flush_rewrite_rules();
 }
 register_activation_hook( __FILE__, 'kamasa_b2b_activate' );
 
@@ -37,7 +38,7 @@ register_activation_hook( __FILE__, 'kamasa_b2b_activate' );
  * @return void
  */
 function kamasa_b2b_deactivate() {
-    // Acciones al desactivar (por ejemplo, limpiar cron jobs personalizados).
+    flush_rewrite_rules();
 }
 register_deactivation_hook( __FILE__, 'kamasa_b2b_deactivate' );
 
@@ -52,6 +53,7 @@ function kamasa_b2b_init() {
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/pricing/pricing-logic.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/frontend/display-logic.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/api/customer-endpoints.php';
+    require_once KAMASA_B2B_PLUGIN_DIR . 'includes/customer-panel/my-account-customization.php';
 
     if ( is_admin() ) {
         require_once KAMASA_B2B_PLUGIN_DIR . 'admin/meta-box-precios-volumen.php';
