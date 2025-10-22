@@ -51,8 +51,69 @@ function kamasa_b2b_register_frontend_assets() {
         KAMASA_B2B_VERSION,
         true
     );
+
+    wp_register_style(
+        'kamasa-rag-widget',
+        KAMASA_B2B_PLUGIN_URL . 'public/css/kamasa-rag-widget.css',
+        array(),
+        KAMASA_B2B_VERSION
+    );
+
+    wp_register_script(
+        'kamasa-rag-widget',
+        KAMASA_B2B_PLUGIN_URL . 'public/js/kamasa-rag-widget.js',
+        array(),
+        KAMASA_B2B_VERSION,
+        true
+    );
 }
 add_action( 'wp_enqueue_scripts', 'kamasa_b2b_register_frontend_assets' );
+
+/**
+ * Encola el widget de recomendaciones asistidas por IA.
+ *
+ * @return void
+ */
+function kamasa_b2b_enqueue_rag_widget_assets() {
+    if ( ! wp_script_is( 'kamasa-rag-widget', 'registered' ) ) {
+        kamasa_b2b_register_frontend_assets();
+    }
+
+    wp_enqueue_style( 'kamasa-rag-widget' );
+    wp_enqueue_script( 'kamasa-rag-widget' );
+
+    $config = apply_filters(
+        'kamasa_b2b_rag_widget_config',
+        array(
+            'initialDelay'    => 3000,
+            'scrollThreshold' => 200,
+        )
+    );
+
+    wp_localize_script(
+        'kamasa-rag-widget',
+        'kamasaWidgetData',
+        array(
+            'apiUrl'          => esc_url_raw( rest_url( 'kamasa/v1/agente/preguntar' ) ),
+            'nonce'           => wp_create_nonce( 'wp_rest' ),
+            'initialDelay'    => isset( $config['initialDelay'] ) ? (int) $config['initialDelay'] : 3000,
+            'scrollThreshold' => isset( $config['scrollThreshold'] ) ? (int) $config['scrollThreshold'] : 200,
+            'i18n'            => array(
+                'assistantName'        => __( 'Asesor IA Kamasa', 'kamasa-b2b-core' ),
+                'bubbleLabel'          => __( '¿Ayuda?', 'kamasa-b2b-core' ),
+                'placeholder'          => __( 'Escribe tu pregunta...', 'kamasa-b2b-core' ),
+                'sendLabel'            => __( 'Enviar', 'kamasa-b2b-core' ),
+                'typing'               => __( 'El asesor está escribiendo…', 'kamasa-b2b-core' ),
+                'error'                => __( 'Ocurrió un error. Inténtalo nuevamente.', 'kamasa-b2b-core' ),
+                'emptyMessage'         => __( 'Escribe una pregunta para comenzar.', 'kamasa-b2b-core' ),
+                'minimizeLabel'        => __( 'Minimizar', 'kamasa-b2b-core' ),
+                'closeLabel'           => __( 'Cerrar', 'kamasa-b2b-core' ),
+                'recommendationsTitle' => __( 'Productos recomendados', 'kamasa-b2b-core' ),
+            ),
+        )
+    );
+}
+add_action( 'wp_enqueue_scripts', 'kamasa_b2b_enqueue_rag_widget_assets' );
 
 /**
  * Filtra el botón de "Añadir al carrito" en el loop de productos.
