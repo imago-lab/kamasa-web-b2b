@@ -97,12 +97,15 @@ function kamasa_display_compare_button( $product_id ) {
     $button_classes = array( 'kamasa-compare-button', 'button' );
 
     if ( $is_selected ) {
-        $button_classes[] = 'is-selected';
+        $button_classes[] = 'added';
     }
 
     $button_text_add    = esc_html__( 'Comparar', 'kamasa-b2b-core' );
     $button_text_remove = esc_html__( 'Quitar de la comparación', 'kamasa-b2b-core' );
+    $icon_add           = 'dashicons-plus';
+    $icon_remove        = 'dashicons-minus';
     $button_label       = $is_selected ? $button_text_remove : $button_text_add;
+    $icon_class         = $is_selected ? $icon_remove : $icon_add;
     ?>
     <button
         type="button"
@@ -110,10 +113,13 @@ function kamasa_display_compare_button( $product_id ) {
         data-product-id="<?php echo esc_attr( $product_id ); ?>"
         data-label-add="<?php echo esc_attr( $button_text_add ); ?>"
         data-label-remove="<?php echo esc_attr( $button_text_remove ); ?>"
+        data-icon-add="<?php echo esc_attr( $icon_add ); ?>"
+        data-icon-remove="<?php echo esc_attr( $icon_remove ); ?>"
         data-selected="<?php echo $is_selected ? 'true' : 'false'; ?>"
         aria-pressed="<?php echo $is_selected ? 'true' : 'false'; ?>"
     >
-        <span class="kamasa-compare-button__label"><?php echo esc_html( $button_label ); ?></span>
+        <span class="kamasa-compare-button__icon dashicons <?php echo esc_attr( $icon_class ); ?>" aria-hidden="true"></span>
+        <span class="kamasa-compare-button__text"><?php echo esc_html( $button_label ); ?></span>
     </button>
     <?php
 }
@@ -132,7 +138,7 @@ function kamasa_render_compare_button_in_loop() {
 
     kamasa_display_compare_button( $product->get_id() );
 }
-add_action( 'woocommerce_after_shop_loop_item', 'kamasa_render_compare_button_in_loop', 25 );
+add_action( 'woocommerce_after_shop_loop_item', 'kamasa_render_compare_button_in_loop', 20 );
 
 /**
  * Muestra el botón de comparación en la ficha de producto individual.
@@ -172,7 +178,7 @@ function kamasa_get_compare_page_url() {
  *
  * @return void
  */
-function kamasa_display_compare_link() {
+function kamasa_display_compare_indicator() {
     $compare_list = kamasa_get_compare_list();
     $count        = count( $compare_list );
 
@@ -182,16 +188,15 @@ function kamasa_display_compare_link() {
         $classes[] = 'is-hidden';
     }
     ?>
-    <div class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" data-max-items="3">
+    <div id="kamasa-compare-indicator" class="<?php echo esc_attr( implode( ' ', $classes ) ); ?>" aria-live="polite">
         <a class="kamasa-compare-indicator__link" href="<?php echo esc_url( kamasa_get_compare_page_url() ); ?>">
             <?php esc_html_e( 'Comparar', 'kamasa-b2b-core' ); ?>
-            (<span id="kamasa-compare-count"><?php echo (int) $count; ?></span>
-            <?php esc_html_e( 'productos', 'kamasa-b2b-core' ); ?>)
+            (<span id="kamasa-compare-count"><?php echo (int) $count; ?></span>)
         </a>
     </div>
     <?php
 }
-add_action( 'wp_footer', 'kamasa_display_compare_link' );
+add_action( 'wp_footer', 'kamasa_display_compare_indicator' );
 
 /**
  * Encola los assets necesarios para la comparación.
@@ -202,6 +207,8 @@ function kamasa_enqueue_compare_assets() {
     if ( is_admin() ) {
         return;
     }
+
+    wp_enqueue_style( 'dashicons' );
 
     wp_enqueue_style(
         'kamasa-compare',
@@ -222,6 +229,7 @@ function kamasa_enqueue_compare_assets() {
         'kamasa-compare',
         'kamasaCompareData',
         array(
+            'ajax_url'     => admin_url( 'admin-ajax.php' ),
             'ajaxUrl'      => admin_url( 'admin-ajax.php' ),
             'nonce'        => wp_create_nonce( 'kamasa_compare_nonce' ),
             'maxItems'     => 3,

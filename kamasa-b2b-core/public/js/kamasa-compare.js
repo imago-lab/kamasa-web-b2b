@@ -1,10 +1,11 @@
 (function (window, document, $, data) {
     'use strict';
 
-    if (!data || !data.ajaxUrl) {
+    if (!data || (!data.ajax_url && !data.ajaxUrl)) {
         return;
     }
 
+    var ajaxUrl = data.ajax_url || data.ajaxUrl;
     var maxItems = parseInt(data.maxItems, 10);
     if (isNaN(maxItems) || maxItems < 1) {
         maxItems = 3;
@@ -15,22 +16,37 @@
             return;
         }
 
-        var label = button.querySelector('.kamasa-compare-button__label');
+        var label = button.querySelector('.kamasa-compare-button__text');
+        var icon = button.querySelector('.kamasa-compare-button__icon');
         var addLabel = button.getAttribute('data-label-add') || '';
         var removeLabel = button.getAttribute('data-label-remove') || '';
+        var iconAdd = button.getAttribute('data-icon-add') || '';
+        var iconRemove = button.getAttribute('data-icon-remove') || '';
 
         button.dataset.selected = isSelected ? 'true' : 'false';
         button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
 
         if (isSelected) {
-            button.classList.add('is-selected');
+            button.classList.add('added');
             if (label) {
                 label.textContent = removeLabel || addLabel;
             }
+            if (icon) {
+                icon.classList.remove(iconAdd);
+                if (iconRemove) {
+                    icon.classList.add(iconRemove);
+                }
+            }
         } else {
-            button.classList.remove('is-selected');
+            button.classList.remove('added');
             if (label) {
                 label.textContent = addLabel || removeLabel;
+            }
+            if (icon) {
+                icon.classList.remove(iconRemove);
+                if (iconAdd) {
+                    icon.classList.add(iconAdd);
+                }
             }
         }
     }
@@ -42,7 +58,7 @@
     }
 
     function updateIndicator(count) {
-        var indicator = document.querySelector('.kamasa-compare-indicator');
+        var indicator = document.getElementById('kamasa-compare-indicator');
         if (!indicator) {
             return;
         }
@@ -54,8 +70,10 @@
 
         if (count > 0) {
             indicator.classList.remove('is-hidden');
+            indicator.removeAttribute('aria-hidden');
         } else {
             indicator.classList.add('is-hidden');
+            indicator.setAttribute('aria-hidden', 'true');
         }
 
         if (typeof data === 'object') {
@@ -99,6 +117,9 @@
 
         var isSelected = button.getAttribute('data-selected') === 'true';
         var currentCount = parseInt(data.currentCount, 10);
+        if (isNaN(currentCount) && typeof data.current_count !== 'undefined') {
+            currentCount = parseInt(data.current_count, 10);
+        }
         if (isNaN(currentCount)) {
             currentCount = 0;
         }
@@ -111,7 +132,7 @@
         toggleLoading(button, true);
 
         $.ajax({
-            url: data.ajaxUrl,
+            url: ajaxUrl,
             method: 'POST',
             dataType: 'json',
             data: {
@@ -150,5 +171,12 @@
             });
     });
 
-    updateIndicator(parseInt(data.currentCount, 10) || 0);
+    var initialCount = parseInt(data.currentCount, 10);
+    if (isNaN(initialCount) && typeof data.current_count !== 'undefined') {
+        initialCount = parseInt(data.current_count, 10);
+    }
+    if (isNaN(initialCount)) {
+        initialCount = 0;
+    }
+    updateIndicator(initialCount);
 })(window, document, window.jQuery, window.kamasaCompareData || {});
