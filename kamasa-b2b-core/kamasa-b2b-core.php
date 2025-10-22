@@ -54,6 +54,11 @@ function kamasa_b2b_init() {
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/frontend/display-logic.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/api/customer-endpoints.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/customer-panel/my-account-customization.php';
+    require_once KAMASA_B2B_PLUGIN_DIR . 'includes/cpt-conversaciones.php';
+    require_once KAMASA_B2B_PLUGIN_DIR . 'includes/api/agente-proxy-endpoint.php';
+
+    add_action( 'init', 'kamasa_register_conversacion_ia_cpt' );
+    add_action( 'rest_api_init', 'kamasa_register_agente_proxy_endpoint' );
 
     if ( is_admin() ) {
         require_once KAMASA_B2B_PLUGIN_DIR . 'admin/meta-box-precios-volumen.php';
