@@ -56,6 +56,7 @@ function kamasa_b2b_init() {
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/customer-panel/my-account-customization.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/cpt-conversaciones.php';
     require_once KAMASA_B2B_PLUGIN_DIR . 'includes/api/agente-proxy-endpoint.php';
+    require_once KAMASA_B2B_PLUGIN_DIR . 'includes/compare/compare-logic.php';
 
     add_action( 'init', 'kamasa_register_conversacion_ia_cpt' );
     add_action( 'rest_api_init', 'kamasa_register_agente_proxy_endpoint' );
