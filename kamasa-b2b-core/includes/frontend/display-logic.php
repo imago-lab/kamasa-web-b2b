@@ -174,6 +174,46 @@ function kamasa_b2b_render_quote_button_single() {
 }
 
 /**
+ * Genera el enlace de descarga de la ficha técnica dinámica de un producto.
+ *
+ * @param int $product_id ID del producto. Si no se proporciona se utiliza el contexto actual.
+ *
+ * @return string Marcado HTML del botón o una cadena vacía si no aplica.
+ */
+function kamasa_mostrar_boton_descarga_ficha_tecnica( $product_id = 0 ) {
+    if ( ! kamasa_b2b_usuario_autorizado() ) {
+        return '';
+    }
+
+    if ( ! $product_id ) {
+        $product_id = get_the_ID();
+    }
+
+    $product_id = absint( $product_id );
+
+    if ( ! $product_id ) {
+        return '';
+    }
+
+    $permalink = get_permalink( $product_id );
+
+    if ( ! $permalink ) {
+        return '';
+    }
+
+    $url_generacion = add_query_arg( 'generar_ficha_tecnica', $product_id, $permalink );
+
+    $button_html = sprintf(
+        '<a href="%1$s" class="button kamasa-download-button" target="_blank" rel="noopener">%2$s%3$s</a>',
+        esc_url( $url_generacion ),
+        '<span class="dashicons dashicons-download" aria-hidden="true"></span>',
+        esc_html__( 'Descargar Ficha Técnica', 'kamasa-b2b-core' )
+    );
+
+    return apply_filters( 'kamasa_b2b_ficha_tecnica_button_html', $button_html, $product_id, $url_generacion );
+}
+
+/**
  * Shortcode del formulario de cotización.
  *
  * @return string
